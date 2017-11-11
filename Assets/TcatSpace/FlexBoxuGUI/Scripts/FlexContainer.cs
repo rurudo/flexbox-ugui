@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class FlexContainer : MonoBehaviour {
 
@@ -53,7 +54,7 @@ public class FlexContainer : MonoBehaviour {
     public AlignItems alignItems;
     public AlignContent alignContent;
 
-    class FlexLine
+    class FlexLineOld
     {
         public float freeSpace;
         public float maxSize;
@@ -68,6 +69,9 @@ public class FlexContainer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Flexboxfy<Image>();
+        FlexLine.Split(transform, FlexLine.Orientation.Horizontal);
+        /*
         switch(flexWrap)
         {
             case FlexWrap.NoWrap:
@@ -80,11 +84,20 @@ public class FlexContainer : MonoBehaviour {
                 Debug.LogError("Undefined flexWrap");
                 break;
         }
+        */
 	}
 
 	// Update is called once per frame
 	void Update () {
 	}
+
+    void Flexboxfy<T>() where T : Component
+    {
+        foreach(var component in GetComponentsInChildren<T>())
+        {
+            var flexItem = component.gameObject.AddComponent<FlexItem>();
+        }
+    }
 
     bool IsRowDirection()
     {
@@ -96,9 +109,9 @@ public class FlexContainer : MonoBehaviour {
         return IsRowDirection() ? Screen.width : Screen.height;
     }
 
-    List<FlexLine> GetFlexLines()
+    List<FlexLineOld> GetFlexLinesOld()
     {
-        var result = new List<FlexLine>();
+        var result = new List<FlexLineOld>();
         var flexItems = GetComponentsInChildren<FlexItem>();
         var list = new List<FlexItem>();
         var areaSize = GetDirectionLength();
@@ -117,7 +130,7 @@ public class FlexContainer : MonoBehaviour {
 
             if(current + directionSize.main > areaSize)
             {
-                var flexLine = new FlexLine()
+                var flexLine = new FlexLineOld()
                 {
                     freeSpace = areaSize - current,
                     items = list,
@@ -133,7 +146,7 @@ public class FlexContainer : MonoBehaviour {
             current += directionSize.main;
         }
 
-        var flexLine2 = new FlexLine()
+        var flexLine2 = new FlexLineOld()
         {
             freeSpace = areaSize - current,
             items = list,
@@ -257,7 +270,7 @@ public class FlexContainer : MonoBehaviour {
         }
     }
 
-    float GetFlexLinePadding(float freeSpace)
+    float GetFlexLineOldPadding(float freeSpace)
     {
         switch (alignItems)
         {
@@ -281,7 +294,7 @@ public class FlexContainer : MonoBehaviour {
 
     void ChangeWrapLayout()
     {
-        var flexLines = GetFlexLines();
+        var flexLines = GetFlexLinesOld();
         var subPosition = 0f;
         foreach(var flexLine in flexLines)
         {
@@ -293,7 +306,7 @@ public class FlexContainer : MonoBehaviour {
                 var rectTransform = flexItem.GetComponent<RectTransform>();
                 ChangeLeftUpLayout(rectTransform);
                 var directionSize = GetCurrentDirectionSize(rectTransform.sizeDelta);
-                var flexLinePadding = GetFlexLinePadding(flexLine.maxSize - directionSize.sub);
+                var flexLinePadding = GetFlexLineOldPadding(flexLine.maxSize - directionSize.sub);
                 rectTransform.position = ToPosition(new DirectionSize
                 {
                     main = mainPosition,
