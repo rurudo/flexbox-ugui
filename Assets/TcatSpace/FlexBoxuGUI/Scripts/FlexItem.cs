@@ -13,6 +13,12 @@ public class FlexItem : MonoBehaviour {
     [HideInInspector]
     public float freeSpace;
 
+    [HideInInspector]
+    public RectTransform rectTransform;
+
+    [HideInInspector]
+    public FlexLine.Orientation orientation; 
+
     public enum BoxSizing
     {
         // BoxSize is basis + padding
@@ -56,5 +62,35 @@ public class FlexItem : MonoBehaviour {
                 throw new System.Exception(errorMessage);
         }
 
+    }
+
+    public void SetPosition(float x, float y)
+    {
+        switch (orientation)
+        {
+            case FlexLine.Orientation.Horizontal:
+                rectTransform.localPosition = new Vector3(x, y, 0);
+                break;
+            case FlexLine.Orientation.Vertical:
+                rectTransform.localPosition = new Vector3(y, x, 0);
+                break;
+        }
+    }
+
+    public void Resize()
+    {
+        switch (orientation)
+        {
+            case FlexLine.Orientation.Horizontal:
+                rectTransform.sizeDelta = new Vector2(
+                    GetContentSize(),
+                    rectTransform.sizeDelta.y);
+                break;
+            case FlexLine.Orientation.Vertical:
+                rectTransform.sizeDelta = new Vector2(
+                    rectTransform.sizeDelta.x,
+                    GetContentSize());
+                break;
+        }
     }
 }

@@ -70,26 +70,29 @@ public class FlexContainer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         Flexboxfy<Image>();
-        FlexLine.Execute(transform);
-        /*
-        FlexLine.Split(transform, FlexLine.Orientation.Horizontal);
+
         if(IsRowDirection())
         {
             var rootSpace = transform.GetComponent<RectTransform>().sizeDelta.x;
         }
+        else
+        {
+
+        }
+
+        var sizeDelta = transform.GetComponent<RectTransform>().sizeDelta;
+        var space = IsRowDirection() ? sizeDelta.x : sizeDelta.y;
         switch(flexWrap)
         {
             case FlexWrap.NoWrap:
-                ChangeNoWrapLayout();
+                FlexLine.Execute(transform, space);
                 break;
             case FlexWrap.Wrap:
-                ChangeWrapLayout();
                 break;
             default:
                 Debug.LogError("Undefined flexWrap");
                 break;
         }
-        */
 	}
 
 	// Update is called once per frame
@@ -101,6 +104,10 @@ public class FlexContainer : MonoBehaviour {
         foreach(var component in GetComponentsInChildren<T>())
         {
             var flexItem = component.gameObject.AddComponent<FlexItem>();
+            flexItem.rectTransform = flexItem.GetComponent<RectTransform>();
+            flexItem.orientation = IsRowDirection() ?
+                FlexLine.Orientation.Horizontal :
+                FlexLine.Orientation.Vertical;
         }
     }
 

@@ -8,8 +8,8 @@ public class FlexLine {
     Orientation orientation;
     public enum Orientation
     {
+        Horizontal,
         Vertical,
-        Horizontal
     }
 
     class FlexBoxElement
@@ -108,17 +108,18 @@ public class FlexLine {
         }
     }
 
-    public static void Execute(Transform root)
+    public static void Execute(Transform root, float space)
     {
         var tree = new FlexItemTree(root);
         var children = tree.GetChildren();
-        var space = root.GetComponent<RectTransform>().sizeDelta.x;
+        if(!children.Any()) { return; }
+
         Resize(children, space);
         Apply(children, space);
 
         foreach(var child in children)
         {
-            Execute(child.transform);
+            Execute(child.transform, child.freeSpace);
         }
     }
 
@@ -139,12 +140,8 @@ public class FlexLine {
         var offset = -space / 2f + firstItemOffset;
         foreach(var flexItem in flexItems)
         {
-            var size = flexItem.GetSize();
-            var rectTransform = flexItem.GetComponent<RectTransform>();
-            rectTransform.localPosition = new Vector3(offset, 0, 0);
-            rectTransform.sizeDelta = new Vector2(
-                flexItem.GetContentSize(),
-                rectTransform.sizeDelta.y);
+            flexItem.SetPosition(offset, 0);
+            flexItem.Resize();
             offset += flexItem.GetSize();
         }
     }
