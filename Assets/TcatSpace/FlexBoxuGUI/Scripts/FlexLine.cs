@@ -12,19 +12,31 @@ public class FlexLine {
         Vertical,
     }
 
-    public static void Execute(Transform root, float space)
+    public FlexLine(Transform root, float space)
+    {
+        ChangeNoWrapLayout(root, space);
+    }
+
+    public float ChangeNoWrapLayout(Transform root, float space)
     {
         var tree = new FlexItemTree(root);
-        var children = tree.GetChildren();
-        if(!children.Any()) { return; }
+        var children = tree.Children;
+        if(!children.Any()) { return tree.Root.GetSize(); }
 
-        Resize(children, space);
+        //Resize(children, space);
         Apply(children, space);
 
+        var total = 0f;
         foreach(var child in children)
         {
-            Execute(child.transform, child.freeSpace);
+            total += ChangeNoWrapLayout(child.transform, child.freeSpace);
         }
+        return total;
+    }
+
+    static void SetSize(List<FlexItem> flexItems)
+    {
+
     }
 
     static void Resize(List<FlexItem> flexItems, float space)
@@ -45,7 +57,7 @@ public class FlexLine {
         foreach (var flexItem in flexItems)
         {
             flexItem.SetPosition(offset, 0);
-            flexItem.Resize();
+            //flexItem.Resize();
             offset += flexItem.GetOffset();
         }
     }

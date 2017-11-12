@@ -85,7 +85,7 @@ public class FlexContainer : MonoBehaviour {
         switch(flexWrap)
         {
             case FlexWrap.NoWrap:
-                FlexLine.Execute(transform, space);
+                new FlexLine(transform, space);
                 break;
             case FlexWrap.Wrap:
                 break;
@@ -104,11 +104,13 @@ public class FlexContainer : MonoBehaviour {
         foreach(var component in GetComponentsInChildren<T>())
         {
             var flexItem = component.gameObject.AddComponent<FlexItem>();
-            flexItem.rectTransform = flexItem.GetComponent<RectTransform>();
             flexItem.orientation = IsRowDirection() ?
                 FlexLine.Orientation.Horizontal :
                 FlexLine.Orientation.Vertical;
             flexItem.direction = flexDirection;
+            flexItem.rectTransform = flexItem.GetComponent<RectTransform>();
+
+            flexItem.LoadRectTransform();
         }
     }
 

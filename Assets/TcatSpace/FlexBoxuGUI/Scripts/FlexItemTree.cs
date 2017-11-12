@@ -5,15 +5,34 @@ using System.Linq;
 
 public class FlexItemTree
 {
+    private FlexItem root;
     private List<FlexItem> children;
-    public List<FlexItem> GetChildren()
+
+    public FlexItem Root
     {
-        return children;
+        get
+        {
+            return root;
+        }
+    }
+
+    public List<FlexItem> Children
+    {
+        get
+        {
+            return children;
+        }
     }
 
     public FlexItemTree(Transform transform)
     {
+        root = transform.GetComponent<FlexItem>();
         children = GetTopLevelChildren(transform);
+    }
+
+    public FlexItem GetRoot()
+    {
+        return Root;
     }
 
     void SearchTopLevelChildren(List<FlexItem> result, Transform transform)

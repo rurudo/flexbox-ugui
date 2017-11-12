@@ -30,10 +30,48 @@ public class FlexItem : MonoBehaviour {
         BorderBox
     }
 
+    public void LoadRectTransform()
+    {
+        switch (orientation)
+        {
+            case FlexLine.Orientation.Horizontal:
+                SetContentSize(rectTransform.sizeDelta.x);
+                break;
+            case FlexLine.Orientation.Vertical:
+                SetContentSize(rectTransform.sizeDelta.y);
+                break;
+        }
+    }
+
     public void SetSize(float size)
     {
-        basis = size - padding * 2;
-        freeSpace = basis;
+        switch (boxSizing)
+        {
+            case BoxSizing.ContentBox:
+                basis = size - padding * 2;
+                freeSpace = basis;
+                break;
+            case BoxSizing.BorderBox:
+                basis = size;
+                freeSpace = basis - padding * 2;
+                break;
+        }
+    }
+
+    public void SetContentSize(float size)
+    {
+        Debug.Log(size);
+        switch (boxSizing)
+        {
+            case BoxSizing.ContentBox:
+                basis = size;
+                freeSpace = basis;
+                break;
+            case BoxSizing.BorderBox:
+                basis = size;
+                freeSpace = basis - padding * 2;
+                break;
+        }
     }
 
     public float GetSize()
