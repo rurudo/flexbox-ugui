@@ -12,20 +12,6 @@ public class FlexLine {
         Vertical,
     }
 
-    static void ToFlexLine(IEnumerable<RectTransform> items)
-    {
-        var flexItemTransforms = items
-            .Select(transform => new
-            {
-                transform,
-                flexItem = transform.GetComponent<FlexItem>()
-            })
-            .Where(layout => layout.flexItem != null);
-        foreach(var layout in flexItemTransforms)
-        {
-        }
-    }
-
     public static void Execute(Transform root, float space)
     {
         var tree = new FlexItemTree(root);
@@ -54,13 +40,13 @@ public class FlexLine {
     {
         if(!flexItems.Any()) { return; }
 
-        var firstItemOffset = flexItems.First().GetSize() / 2f;
-        var offset = -space / 2f + firstItemOffset;
-        foreach(var flexItem in flexItems)
+        var offset = flexItems.First().GetHead(space);
+
+        foreach (var flexItem in flexItems)
         {
             flexItem.SetPosition(offset, 0);
             flexItem.Resize();
-            offset += flexItem.GetSize();
+            offset += flexItem.GetOffset();
         }
     }
 }

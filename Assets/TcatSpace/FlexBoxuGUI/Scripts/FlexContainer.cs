@@ -108,6 +108,7 @@ public class FlexContainer : MonoBehaviour {
             flexItem.orientation = IsRowDirection() ?
                 FlexLine.Orientation.Horizontal :
                 FlexLine.Orientation.Vertical;
+            flexItem.direction = flexDirection;
         }
     }
 

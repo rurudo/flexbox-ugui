@@ -17,7 +17,10 @@ public class FlexItem : MonoBehaviour {
     public RectTransform rectTransform;
 
     [HideInInspector]
-    public FlexLine.Orientation orientation; 
+    public FlexLine.Orientation orientation;
+
+    [HideInInspector]
+    public FlexContainer.FlexDirection direction;
 
     public enum BoxSizing
     {
@@ -92,5 +95,45 @@ public class FlexItem : MonoBehaviour {
                     GetContentSize());
                 break;
         }
+    }
+
+    public float GetHead(float space)
+    {
+        var half = GetSize() / 2f;
+        switch (direction)
+        {
+            case FlexContainer.FlexDirection.Row:
+                return -space / 2f + half;
+            case FlexContainer.FlexDirection.RowReverse:
+                return space / 2f - half;
+            case FlexContainer.FlexDirection.Column:
+                return space / 2f - half;
+            case FlexContainer.FlexDirection.ColumnReverse:
+                return -space / 2f + half;
+            default:
+                var errorMessage = "undefined flex direction";
+                Debug.LogError(errorMessage);
+                throw new System.Exception(errorMessage);
+        }
+    }
+
+    public float GetOffset()
+    {
+        switch (direction)
+        {
+            case FlexContainer.FlexDirection.Row:
+                return GetSize();
+            case FlexContainer.FlexDirection.RowReverse:
+                return -GetSize();
+            case FlexContainer.FlexDirection.Column:
+                return -GetSize();
+            case FlexContainer.FlexDirection.ColumnReverse:
+                return GetSize();
+            default:
+                var errorMessage = "undefined flex direction";
+                Debug.LogError(errorMessage);
+                throw new System.Exception(errorMessage);
+        }
+
     }
 }
