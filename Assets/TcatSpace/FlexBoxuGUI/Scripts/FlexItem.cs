@@ -21,6 +21,12 @@ public class FlexItem : MonoBehaviour {
         BorderBox
     }
 
+    public void SetSize(float size)
+    {
+        basis = size - padding * 2;
+        freeSpace = basis;
+    }
+
     public float GetSize()
     {
         switch (boxSizing)

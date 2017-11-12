@@ -89,7 +89,7 @@ public class FlexLine {
     {
         return
             from children in root.Cast<RectTransform>()
-            let component = children.GetComponent<T>()
+            let component = children.GetComponentInChildren<T>()
             where component != null
             select component;
     }
@@ -108,6 +108,47 @@ public class FlexLine {
         }
     }
 
+    public static void Execute(Transform root)
+    {
+        var tree = new FlexItemTree(root);
+        var children = tree.GetChildren();
+        var space = root.GetComponent<RectTransform>().sizeDelta.x;
+        Resize(children, space);
+        Apply(children, space);
+
+        foreach(var child in children)
+        {
+            Execute(child.transform);
+        }
+    }
+
+    static void Resize(List<FlexItem> flexItems, float space)
+    {
+        var unitSize = space / flexItems.Count;
+        foreach(var flexItem in flexItems)
+        {
+            flexItem.SetSize(unitSize);
+        }
+    }
+
+    static void Apply(List<FlexItem> flexItems, float space)
+    {
+        if(!flexItems.Any()) { return; }
+
+        var firstItemOffset = flexItems.First().GetSize() / 2f;
+        var offset = -space / 2f + firstItemOffset;
+        foreach(var flexItem in flexItems)
+        {
+            var size = flexItem.GetSize();
+            var rectTransform = flexItem.GetComponent<RectTransform>();
+            rectTransform.localPosition = new Vector3(offset, 0, 0);
+            rectTransform.sizeDelta = new Vector2(
+                flexItem.GetContentSize(),
+                rectTransform.sizeDelta.y);
+            offset += flexItem.GetSize();
+        }
+    }
+
     FlexLine(Orientation orientation, IEnumerable<FlexBoxElement> elements, float space)
     {
         this.orientation = orientation;
@@ -115,17 +156,14 @@ public class FlexLine {
         var unitSize = space / list.Count;
         foreach(var element in list)
         {
+            element.flexItem.SetSize(unitSize);
             if(element.orientation == Orientation.Horizontal)
             {
                 //element.flexItem.basis = element.rectTransform.sizeDelta.x;
-                element.flexItem.basis = unitSize - element.flexItem.padding * 2;
-                element.flexItem.freeSpace = element.flexItem.basis;
             }
             else
             {
                 //element.flexItem.basis = element.rectTransform.sizeDelta.y;
-                element.flexItem.basis = unitSize - element.flexItem.padding * 2;
-                element.flexItem.freeSpace = element.flexItem.basis;
             }
         }
 

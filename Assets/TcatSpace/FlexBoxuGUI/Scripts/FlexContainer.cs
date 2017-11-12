@@ -70,8 +70,13 @@ public class FlexContainer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         Flexboxfy<Image>();
-        FlexLine.Split(transform, FlexLine.Orientation.Horizontal);
+        FlexLine.Execute(transform);
         /*
+        FlexLine.Split(transform, FlexLine.Orientation.Horizontal);
+        if(IsRowDirection())
+        {
+            var rootSpace = transform.GetComponent<RectTransform>().sizeDelta.x;
+        }
         switch(flexWrap)
         {
             case FlexWrap.NoWrap:
